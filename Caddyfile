@@ -6,18 +6,21 @@
 # NPM -> Caddy hop fail the handshake (502 at the proxy).
 #
 # NPM proxy host: scheme http, forward to <this-host-ip>:80, Force SSL on.
-#
-# Serves the SPA from /srv/vaultec with index.html fallback for client-side
-# routing, and reverse-proxies API/health/unlock/setup to the api service.
 :80 {
-    reverse_proxy /api/* api:8000
-    reverse_proxy /health api:8000
-    reverse_proxy /unlock api:8000
-    reverse_proxy /setup api:8000
-
-    root /srv/vaultec
-    file_server {
-        index index.html
+    # API endpoints -> FastAPI. `handle` blocks are mutually exclusive and
+    # evaluated in order, so these take precedence over the SPA fallback below.
+    # (A global `try_files ... /index.html` would otherwise rewrite POST /setup
+    # to /index.html and the static file_server would answer POST with 405.)
+    @api path /api/* /health /unlock /setup
+    handle @api {
+        reverse_proxy api:8000
     }
-    try_files {path} /index.html
+
+    # Everything else: static SPA from /srv/vaultec, with index.html fallback
+    # so client-side routing works for deep links.
+    handle {
+        root * /srv/vaultec
+        try_files {path} /index.html
+        file_server
+    }
 }
