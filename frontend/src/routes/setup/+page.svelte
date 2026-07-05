@@ -1,6 +1,6 @@
-<script lang="ts">
+﻿<script lang="ts">
   import { goto } from '$app/navigation';
-  import { session } from '$lib/stores/session.svelte';
+  import { session } from '$lib/stores/session.svelte.ts';
   import { apiJson } from '$lib/api';
   import { Panel, Button } from '$lib/components';
 

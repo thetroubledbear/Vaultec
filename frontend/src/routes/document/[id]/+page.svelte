@@ -3,7 +3,7 @@
   import { page } from '$app/stores';
   import { apiJson, ApiError, contentUrl, downloadUrl, apiDownload } from '$lib/api';
   import { formatFileSize, formatDate } from '$lib/utils';
-  import { session } from '$lib/stores/session.svelte';
+  import { session } from '$lib/stores/session.svelte.ts';
   import Panel from '$lib/components/Panel.svelte';
   import Button from '$lib/components/Button.svelte';
   import Badge from '$lib/components/Badge.svelte';

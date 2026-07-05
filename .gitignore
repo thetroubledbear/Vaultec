@@ -67,3 +67,11 @@ htmlcov/
 
 # Linting
 .ruff_cache/
+
+# Node / SvelteKit (generated — must NOT be committed; rebuilt by install.sh)
+node_modules/
+.svelte-kit/
+frontend/build/
+
+# Transfer archives
+*.tgz

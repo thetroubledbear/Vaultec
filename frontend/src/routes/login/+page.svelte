@@ -1,7 +1,7 @@
-<script lang="ts">
+﻿<script lang="ts">
   import { goto } from '$app/navigation';
   import { apiJson } from '$lib/api';
-  import { session } from '$lib/stores/session.svelte';
+  import { session } from '$lib/stores/session.svelte.ts';
   import { Panel, Button } from '$lib/components';
 
   let username = $state('');
@@ -69,7 +69,7 @@
             type="password"
             bind:value={password}
             disabled={loading}
-            placeholder="••••••••••"
+            placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
             class="input"
           />
         </div>

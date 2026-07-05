@@ -1,6 +1,6 @@
-<script lang="ts">
+﻿<script lang="ts">
   import { goto } from '$app/navigation';
-  import { session } from '$lib/stores/session.svelte';
+  import { session } from '$lib/stores/session.svelte.ts';
   import { apiJson, apiMultipart, apiDownload, ApiError } from '$lib/api';
   import { formatFileSize, formatDate } from '$lib/utils';
   import Panel from '$lib/components/Panel.svelte';
@@ -231,18 +231,18 @@
   }
 
   function getFileIcon(mimetype: string | null | undefined): string {
-    if (!mimetype) return '📎';
-    if (mimetype.startsWith('image/')) return '🖼';
-    if (mimetype === 'application/pdf') return '📄';
-    if (mimetype.startsWith('text/')) return '📝';
-    return '📎';
+    if (!mimetype) return 'ðŸ“Ž';
+    if (mimetype.startsWith('image/')) return 'ðŸ–¼';
+    if (mimetype === 'application/pdf') return 'ðŸ“„';
+    if (mimetype.startsWith('text/')) return 'ðŸ“';
+    return 'ðŸ“Ž';
   }
 </script>
 
 <div class="max-w-7xl mx-auto px-4 py-8">
   {#if !session.unlocked}
     <div class="mb-8 p-6 bg-amber-50 dark:bg-amber-900/20 border-2 border-amber-200 dark:border-amber-800 rounded-lg">
-      <h2 class="text-lg font-semibold text-amber-900 dark:text-amber-200 mb-2">🔒 Vault is Locked</h2>
+      <h2 class="text-lg font-semibold text-amber-900 dark:text-amber-200 mb-2">ðŸ”’ Vault is Locked</h2>
       <p class="text-amber-800 dark:text-amber-300 mb-4">
         Your vault has been locked. Use the Unlock button in the top bar to unlock it with your master passphrase.
       </p>
@@ -361,13 +361,13 @@
                 onclick={() => (viewMode = 'grid')}
                 variant={viewMode === 'grid' ? 'primary' : 'ghost'}
               >
-                ⊞ Grid
+                âŠž Grid
               </Button>
               <Button
                 onclick={() => (viewMode = 'list')}
                 variant={viewMode === 'list' ? 'primary' : 'ghost'}
               >
-                ≡ List
+                â‰¡ List
               </Button>
             </div>
 
@@ -395,17 +395,17 @@
           <!-- Documents Display -->
           {#if loading || searchLoading}
             <div class="text-center text-muted">
-              <div class="inline-block animate-spin">⏳</div>
+              <div class="inline-block animate-spin">â³</div>
               <p class="mt-2">Loading documents...</p>
             </div>
           {:else if searchQuery.trim() && documents.length === 0}
             <div class="text-center">
-              <div class="text-4xl mb-2">🔍</div>
+              <div class="text-4xl mb-2">ðŸ”</div>
               <p class="text-muted">No documents found matching your search.</p>
             </div>
           {:else if documents.length === 0}
             <div class="text-center">
-              <div class="text-4xl mb-2">📄</div>
+              <div class="text-4xl mb-2">ðŸ“„</div>
               <p class="text-muted">No documents yet. Upload one to get started!</p>
             </div>
           {:else if viewMode === 'grid'}
@@ -447,7 +447,7 @@
                     </div>
                   {/if}
                   <p class="text-xs text-muted mb-3 font-mono">
-                    {formatFileSize(doc.blob.size_bytes)} • {formatDate(doc.created_at)}
+                    {formatFileSize(doc.blob.size_bytes)} â€¢ {formatDate(doc.created_at)}
                   </p>
 
                   <!-- Actions -->

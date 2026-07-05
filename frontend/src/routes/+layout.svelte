@@ -1,9 +1,9 @@
-<script lang="ts">
+﻿<script lang="ts">
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';
-  import { session } from '$lib/stores/session.svelte';
-  import { validation } from '$lib/stores/validation.svelte';
-  import { theme } from '$lib/stores/theme.svelte';
+  import { session } from '$lib/stores/session.svelte.ts';
+  import { validation } from '$lib/stores/validation.svelte.ts';
+  import { theme } from '$lib/stores/theme.svelte.ts';
   import { apiJson } from '$lib/api';
   import { Button, Badge, StatusDot } from '$lib/components';
   import '../app.css';
@@ -128,7 +128,7 @@
 
             <!-- Theme toggle -->
             <Button variant="ghost" onclick={() => theme.toggle()}>
-              {theme.value === 'dark' ? '☀ LIGHT' : '☾ DARK'}
+              {theme.value === 'dark' ? 'â˜€ LIGHT' : 'â˜¾ DARK'}
             </Button>
 
             <!-- Unlock Button -->
