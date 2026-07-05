@@ -1,4 +1,4 @@
-﻿<script lang="ts">
+<script lang="ts">
   import { session } from '$lib/stores/session.svelte.ts';
   import { apiJson, ApiError } from '$lib/api';
   import Panel from '$lib/components/Panel.svelte';
@@ -148,7 +148,7 @@
 <div class="max-w-7xl mx-auto px-4 py-8">
   {#if !session.unlocked}
     <div class="mb-8 p-6 bg-amber-50 dark:bg-amber-900/20 border-2 border-amber-200 dark:border-amber-800 rounded-lg">
-      <h2 class="text-lg font-semibold text-amber-900 dark:text-amber-200 mb-2">ðŸ”’ Vault is Locked</h2>
+      <h2 class="text-lg font-semibold text-amber-900 dark:text-amber-200 mb-2">🔒 Vault is Locked</h2>
       <p class="text-amber-800 dark:text-amber-300 mb-4">
         Your vault has been locked. Use the Unlock button in the top bar to unlock it with your master passphrase.
       </p>
@@ -176,7 +176,7 @@
           </div>
           <div class="text-xs uppercase tracking-wider text-muted">
             <span class="text-bright">Providers:</span>
-            {status.embed_provider || 'none'} (embed) â€¢ {status.chat_provider || 'none'} (chat)
+            {status.embed_provider || 'none'} (embed) • {status.chat_provider || 'none'} (chat)
           </div>
         </div>
       </div>
@@ -210,7 +210,7 @@
           </div>
         {:else if query.trim() && searchResults.length === 0}
           <div class="text-center py-8">
-            <div class="text-4xl mb-2">ðŸ”</div>
+            <div class="text-4xl mb-2">🔍</div>
             <p class="text-muted text-sm">No matches found</p>
           </div>
         {:else if searchResults.length > 0}
@@ -235,7 +235,7 @@
                   rel="noreferrer"
                   class="text-cyan hover:text-cyan text-xs uppercase tracking-wider hover:underline"
                 >
-                  â†’ Open Document
+                  → Open Document
                 </a>
               </div>
             {/each}
@@ -306,7 +306,7 @@
                           rel="noreferrer"
                           class="text-cyan hover:text-cyan text-xs uppercase tracking-wider hover:underline"
                         >
-                          â†’ View Document
+                          → View Document
                         </a>
                       </div>
                     {/each}

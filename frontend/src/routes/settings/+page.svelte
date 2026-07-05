@@ -1,4 +1,4 @@
-﻿<script lang="ts">
+<script lang="ts">
   import { session } from '$lib/stores/session.svelte.ts';
   import { apiJson, ApiError } from '$lib/api';
   import Panel from '$lib/components/Panel.svelte';
@@ -354,7 +354,7 @@
 
       {#if statsLoading}
         <div class="text-center py-8 text-muted">
-          <div class="inline-block animate-spin">â³</div>
+          <div class="inline-block animate-spin">⏳</div>
           <p class="mt-2">Loading statistics...</p>
         </div>
       {:else if stats}
@@ -366,7 +366,7 @@
           <StatCard label="Households" value={stats.household_count} accent="cyan" />
           <StatCard
             label="Vault"
-            value={stats.vault_unlocked ? 'ðŸ”“' : 'ðŸ”’'}
+            value={stats.vault_unlocked ? '🔓' : '🔒'}
             accent={stats.vault_unlocked ? 'success' : 'amber'}
           />
         </div>
@@ -386,7 +386,7 @@
 
       {#if statsLoading}
         <div class="text-center py-8 text-muted">
-          <div class="inline-block animate-spin">â³</div>
+          <div class="inline-block animate-spin">⏳</div>
           <p class="mt-2">Loading users...</p>
         </div>
       {:else if users.length === 0}
@@ -494,7 +494,7 @@
                     </td>
                     <td class="px-4 py-3">
                       <span class={user.is_active ? 'text-success' : 'text-muted'}>
-                        {user.is_active ? 'âœ“ Active' : 'âœ— Inactive'}
+                        {user.is_active ? '✓ Active' : '✗ Inactive'}
                       </span>
                     </td>
                     <td class="px-4 py-3 text-muted">

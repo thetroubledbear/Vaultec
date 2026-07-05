@@ -1,4 +1,4 @@
-﻿<script lang="ts">
+<script lang="ts">
   import { session } from '$lib/stores/session.svelte.ts';
   import { apiJson, contentUrl } from '$lib/api';
   import { formatFileSize, formatDate } from '$lib/utils';
@@ -143,7 +143,7 @@
 <div class="max-w-6xl mx-auto px-4 py-8">
   {#if !session.unlocked}
     <div class="mb-8 p-6 bg-amber-50 dark:bg-amber-900/20 border-2 border-amber-200 dark:border-amber-800 rounded-lg">
-      <h2 class="text-lg font-semibold text-amber-900 dark:text-amber-200 mb-2">ðŸ”’ Vault is Locked</h2>
+      <h2 class="text-lg font-semibold text-amber-900 dark:text-amber-200 mb-2">🔒 Vault is Locked</h2>
       <p class="text-amber-800 dark:text-amber-300 mb-4">
         Your vault has been locked. Use the Unlock button in the top bar to unlock it with your master passphrase.
       </p>
@@ -162,13 +162,13 @@
 
     {#if loading}
       <div class="p-8 text-center">
-        <div class="inline-block animate-spin text-4xl">â³</div>
+        <div class="inline-block animate-spin text-4xl">⏳</div>
         <p class="mt-2 text-muted">Loading validation queue...</p>
       </div>
     {:else if items.length === 0}
       <Panel title="INBOX ZERO">
         <div class="text-center py-8">
-          <div class="text-6xl mb-4">âœ¨</div>
+          <div class="text-6xl mb-4">✨</div>
           <p class="text-muted text-sm">No scans waiting for review. Check back later!</p>
         </div>
       </Panel>
@@ -199,7 +199,7 @@
                     </div>
                   {:else}
                     <div class="text-center">
-                      <div class="text-4xl mb-2">ðŸ“Ž</div>
+                      <div class="text-4xl mb-2">📎</div>
                       <p class="text-sm text-muted">{item.filename}</p>
                     </div>
                   {/if}
