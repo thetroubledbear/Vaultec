@@ -128,7 +128,7 @@
 
             <!-- Theme toggle -->
             <Button variant="ghost" onclick={() => theme.toggle()}>
-              {theme.value === 'dark' ? 'â˜€ LIGHT' : 'â˜¾ DARK'}
+              {theme.value === 'dark' ? '☀ LIGHT' : '☾ DARK'}
             </Button>
 
             <!-- Unlock Button -->
