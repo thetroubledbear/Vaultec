@@ -113,11 +113,14 @@ fi
 log "Building frontend SPA..."
 if [[ ! -f frontend/build/index.html ]]; then
     log_info "Building frontend via docker container..."
+    # Prefer reproducible `npm ci`, but fall back to `npm install` when the
+    # lockfile has drifted out of sync with package.json (otherwise `npm ci`
+    # aborts the whole install).
     docker run --rm \
         -v "$REPO_ROOT/frontend":/app \
         -w /app \
         node:20-alpine \
-        sh -c "npm ci && npm run build"
+        sh -c "npm ci || npm install; npm run build"
     log_info "Frontend build complete"
 else
     log_info "frontend/build/index.html already exists, skipping build"
