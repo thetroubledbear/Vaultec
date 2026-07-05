@@ -26,7 +26,7 @@ export const options = {
 		app: ({ head, body, assets, nonce, env }) => "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <link rel=\"icon\" href=\"" + assets + "/favicon.ico\" />\n    <meta name=\"viewport\" content=\"width=device-width\" />\n    <title>Vaultec</title>\n    " + head + "\n  </head>\n  <body data-sveltekit-preload-data=\"hover\">\n    <div style=\"display: contents\">" + body + "</div>\n  </body>\n</html>\n",
 		error
 	},
-	version_hash: "uzh666"
+	version_hash: "7mq3tr"
 };
 
 export async function get_hooks() {

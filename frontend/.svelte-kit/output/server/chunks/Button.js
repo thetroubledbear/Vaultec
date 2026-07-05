@@ -1,19 +1,6 @@
-import { aa as attr_class, ab as stringify, e as escape_html, b as attr, a9 as derived } from "./index.js";
+import { e as escape_html, b as attr, aa as attr_class, ab as stringify, a9 as derived } from "./index.js";
 import "clsx";
 /* empty css                                    */
-function StatusDot($$renderer, $$props) {
-  $$renderer.component(($$renderer2) => {
-    const { tone = "cyan", pulse = false } = $$props;
-    const toneColor = {
-      cyan: "bg-cyan",
-      amber: "bg-amber",
-      danger: "bg-danger",
-      success: "bg-success",
-      muted: "bg-muted"
-    }[tone];
-    $$renderer2.push(`<span${attr_class(`status-dot ${stringify(toneColor)} ${pulse ? "status-pulse" : ""}`)}></span>`);
-  });
-}
 function Panel($$renderer, $$props) {
   const { title, subtitle, children, right } = $$props;
   $$renderer.push(`<div class="hud-panel hud-corners">`);
@@ -25,7 +12,6 @@ function Panel($$renderer, $$props) {
       $$renderer.push(`<div class="flex items-center gap-2"><h2 class="text-sm uppercase font-bold tracking-widest text-bright glow-cyan">${escape_html(title)}</h2> `);
       if (!subtitle) {
         $$renderer.push("<!--[0-->");
-        StatusDot($$renderer, { pulse: true, tone: "cyan" });
       } else {
         $$renderer.push("<!--[-1-->");
       }
@@ -83,7 +69,7 @@ function Button($$renderer, $$props) {
     $$renderer2.push(`<button${attr("type", type)}${attr("disabled", disabled || loading, true)}${attr_class(`btn ${stringify(variantClass())}`)}>`);
     if (loading) {
       $$renderer2.push("<!--[0-->");
-      $$renderer2.push(`<span class="inline-block w-3 h-3 border border-current border-t-transparent rounded-full animate-spin mr-2"></span>`);
+      $$renderer2.push(`<span class="inline-block mr-2 animate-pulse-dot font-mono" aria-hidden="true">▮</span>`);
     } else {
       $$renderer2.push("<!--[-1-->");
     }

@@ -137,7 +137,7 @@
       "_state.svelte.js"
     ],
     "css": [
-      "_app/immutable/assets/_layout.DyKljpdc.css",
+      "_app/immutable/assets/_layout.Bf-c5A5a.css",
       "_app/immutable/assets/Panel.DkI2EP3x.css"
     ]
   },
@@ -199,6 +199,15 @@
       "_root.js",
       "_state.svelte.js",
       "_Button.js"
+    ]
+  },
+  "src/routes/search/+page.svelte": {
+    "file": "entries/pages/search/_page.svelte.js",
+    "name": "entries/pages/search/_page.svelte",
+    "src": "src/routes/search/+page.svelte",
+    "isEntry": true,
+    "css": [
+      "_app/immutable/assets/Panel.DkI2EP3x.css"
     ]
   },
   "src/routes/settings/+page.svelte": {
