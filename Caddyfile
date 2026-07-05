@@ -1,0 +1,29 @@
+# Caddyfile: Production deployment for Vaultec
+# Serves HTTPS (internal TLS) on port 443 with SPA fallback
+# Reverse-proxies /api/*, /health, /unlock, /setup to FastAPI backend at api:8000
+# Serves static SPA from /srv/vaultec with fallback to index.html
+
+# Production: HTTPS with internal TLS (LAN self-signed)
+# Use port 443 with tls internal so it works on a home LAN without public DNS certs
+:443 {
+    # Internal TLS: Caddy generates self-signed certs, no external CA needed
+    tls internal
+
+    # API & health endpoints: reverse-proxy to api service on port 8000
+    reverse_proxy /api/* api:8000
+    reverse_proxy /health api:8000
+    reverse_proxy /unlock api:8000
+    reverse_proxy /setup api:8000
+
+    # Static SPA: serve from build directory with index.html fallback for client-side routing
+    # When a request hits a path that doesn't match a real file, fallback to /index.html
+    # (e.g. /vault/settings -> /index.html, which is then routed by SvelteKit)
+    root /srv/vaultec
+    file_server {
+        # Enable showing the index.html if no matching file/directory
+        index index.html
+    }
+    # Fallback for SPA: if the requested path doesn't exist as a file, serve index.html
+    # This allows client-side routing to work for all paths
+    try_files {path} /index.html
+}

@@ -1,0 +1,141 @@
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: vaultec-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: vaultec-api
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      POSTGRES_HOST: db
+      POSTGRES_USER: ${POSTGRES_USER}
+      VAULT_BLOB_DIR: ${VAULT_BLOB_DIR}
+      VAULT_TMP_DIR: ${VAULT_TMP_DIR}
+      VAULT_INCOMING_DIR: ${VAULT_INCOMING_DIR:-/vault/incoming}
+      APP_ENV: ${APP_ENV}
+      SESSION_COOKIE_NAME: ${SESSION_COOKIE_NAME}
+      # AI features (OCR + embeddings + RAG). Local Ollama by default; cloud opt-in.
+      AI_ENABLED: ${AI_ENABLED:-true}
+      EMBED_PROVIDER: ${EMBED_PROVIDER:-ollama}
+      CHAT_PROVIDER: ${CHAT_PROVIDER:-ollama}
+      EMBED_DIM: ${EMBED_DIM:-768}
+      OLLAMA_URL: ${OLLAMA_URL:-http://ollama:11434}
+      OLLAMA_EMBED_MODEL: ${OLLAMA_EMBED_MODEL:-nomic-embed-text}
+      OLLAMA_CHAT_MODEL: ${OLLAMA_CHAT_MODEL:-qwen2.5:3b}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      ANTHROPIC_CHAT_MODEL: ${ANTHROPIC_CHAT_MODEL:-claude-opus-4-8}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_EMBED_MODEL: ${OPENAI_EMBED_MODEL:-text-embedding-3-small}
+    volumes:
+      - vaultblobs:${VAULT_BLOB_DIR}
+      - vaulttmp:${VAULT_TMP_DIR}
+      - vaultincoming:${VAULT_INCOMING_DIR:-/vault/incoming}
+    ports:
+      - "8000:8000"
+
+  worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: vaultec-worker
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      POSTGRES_HOST: db
+      POSTGRES_USER: ${POSTGRES_USER}
+      VAULT_BLOB_DIR: ${VAULT_BLOB_DIR}
+      VAULT_TMP_DIR: ${VAULT_TMP_DIR}
+      APP_ENV: ${APP_ENV}
+      SESSION_COOKIE_NAME: ${SESSION_COOKIE_NAME}
+    volumes:
+      - vaultblobs:${VAULT_BLOB_DIR}
+      - vaulttmp:${VAULT_TMP_DIR}
+    # TODO: Replace with actual worker command
+    command: /bin/sh -c "echo 'Worker placeholder' && sleep infinity"
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: vaultec-ollama
+    restart: unless-stopped
+    volumes:
+      - ollama_models:/root/.ollama
+    # Expose for embeddings API
+    ports:
+      - "11434:11434"
+    # NOTE: Optional heavy service. Install script controls whether this starts.
+    # For dev: uncomment or run separately. For prod: only starts with --with-ai flag.
+
+  # Optional FTP drop-target for network scanners (e.g. Brother MFC-L2700W "Scan to FTP").
+  # The scanner pushes files here; they land in the same vaultincoming volume the api
+  # watches, so scans flow into the validation Inbox automatically.
+  # Start it explicitly:  docker compose --profile scanner up -d scanner-ftp
+  scanner-ftp:
+    image: stilliard/pure-ftpd:hardened
+    container_name: vaultec-scanner-ftp
+    restart: unless-stopped
+    profiles: ["scanner"]
+    environment:
+      PUBLICHOST: ${SCANNER_FTP_PUBLICHOST:-0.0.0.0}   # set to the server's LAN IP
+      FTP_USER_NAME: ${SCANNER_FTP_USER:-scanner}
+      FTP_USER_PASS: ${SCANNER_FTP_PASS:-changeme}
+      FTP_USER_HOME: /home/scanner
+    volumes:
+      # The scanner's FTP home IS the incoming dir the api watches.
+      - vaultincoming:/home/scanner
+    ports:
+      - "21:21"
+      - "30000-30009:30000-30009"   # passive-mode data ports
+
+  caddy:
+    image: caddy:latest
+    container_name: vaultec-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./frontend/build:/srv/vaultec:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - api
+
+volumes:
+  pgdata:
+    # NOTE: In production, mount pgdata on a LUKS-encrypted disk
+  vaultblobs:
+    # NOTE: In production, mount vaultblobs on a LUKS-encrypted disk
+  vaulttmp:
+    # NOTE: In production, mount vaulttmp on a LUKS-encrypted disk
+  vaultincoming:
+    # NOTE: Scanner (Brother L2700W) drops files here via SMB/FTP share on host
+    # mapped to this volume. The api container watches this directory and ingests
+    # scanned PDFs into the validation queue for human review.
+  ollama_models:
+  caddy_data:
+  caddy_config:

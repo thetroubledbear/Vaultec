@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vaultec"
+version = "0.1.0"
+description = "Local household document-vault app"
+requires-python = ">=3.12"
+authors = [{name = "Vaultec"}]
+
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "sqlalchemy>=2",
+    "psycopg[binary]",
+    "pgvector",
+    "alembic",
+    "pydantic-settings",
+    "argon2-cffi",
+    "cryptography",
+    "python-multipart",
+    "httpx",
+    "anthropic",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "httpx",
+    "ruff",
+]

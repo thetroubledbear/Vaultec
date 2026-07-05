@@ -1,0 +1,86 @@
+VAULTEC PRODUCTION DEPLOYMENT - SETUP CHECKLIST
+===============================================
+
+Files Created/Modified:
+✓ Caddyfile (replaced) - Production HTTPS with internal TLS, SPA + API routing
+✓ docker-compose.yml (updated) - Added restart policies, env var substitution, frontend volume
+✓ deploy/install.sh (new) - One-shot Linux installer with Docker setup, frontend build, health checks
+✓ deploy/backup.sh (new) - Database dump + optional BorgBackup with retention
+✓ deploy/README.md (new) - Complete operator guide with LUKS setup, restore, monitoring
+
+OPERATOR TASKS (Manual):
+========================
+
+1. BEFORE RUNNING INSTALL:
+   - Ensure the target is Debian/Ubuntu Linux (12+ GB free disk recommended)
+   - Have SSH access and sudo/root capability
+   - (Optional) Prepare a LUKS-encrypted disk for storage (see deploy/README.md)
+
+2. RUN THE INSTALLER on the target server:
+   
+   cd /path/to/vaultec
+   sudo bash deploy/install.sh
+   
+   OR with AI features (Ollama):
+   
+   sudo bash deploy/install.sh --with-ai
+
+   Expected time: 3-10 minutes (depends on hardware/network)
+
+3. POST-INSTALL:
+   - Script will print NEXT STEPS with server IP
+   - Find IP: hostname -I
+   - Open: https://<server-ip>/ (accept self-signed cert)
+   - Complete setup: POST to /setup with admin username + master passphrase
+
+4. AUTO-START ON REBOOT:
+   - Restart policies already set (unless-stopped)
+   - Docker service auto-starts via systemd (enabled by installer)
+   - Containers restart automatically on reboot
+   - After reboot: manually unlock vault via /unlock endpoint
+
+5. BACKUP STRATEGY:
+   - Local: bash deploy/backup.sh (runs SQL dump to backups/)
+   - Remote: Configure BORG_REPO env var (see deploy/README.md)
+   - Cron: 0 2 * * * cd /path/to/vaultec && bash deploy/backup.sh
+
+6. ENCRYPTION (Recommended):
+   - deploy/README.md includes LUKS encryption steps
+   - Mount encrypted storage at /mnt/vaultec-storage
+   - Configure Docker data-root (see guide for exact steps)
+
+NOTES:
+======
+
+- The .env file is generated with a STRONG random POSTGRES_PASSWORD
+- Session cookies require HTTPS (APP_ENV=prod forces secure flag)
+- Blobs are envelope-encrypted at app level (backup target sees only ciphertext)
+- Development mode (APP_ENV=dev) uses local .env and works without Caddy
+- Both scripts are idempotent—safe to re-run
+
+FILES THAT SHOULD NOT CHANGE:
+==============================
+
+- backend/entrypoint.sh - Already runs alembic + uvicorn (no change needed)
+- frontend/svelte.config.js - Already configured with adapter-static fallback
+- frontend/build/ - Built by install.sh in container (no Node on host)
+
+VERIFICATION:
+=============
+
+After install, verify:
+1. curl -k https://localhost/  → SPA loads
+2. curl -k https://localhost/health  → {"status": "ok"}
+3. docker compose ps  → all services healthy
+4. docker compose logs api  → no errors
+
+TROUBLESHOOTING:
+================
+
+See deploy/README.md Troubleshooting section for:
+- API won't start
+- Frontend 404
+- HTTPS cert errors
+- Disk space issues
+- Development mode fallback
+
